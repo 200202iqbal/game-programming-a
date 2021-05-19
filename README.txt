@@ -20,3 +20,4 @@ Fungsi repr () dimaksudkan untuk mengembalikan representasi yang dapat dibaca (a
  '!a' は ascii() を、 '!s' は str() を、 '!r' は repr() を適用します:
 
  ! ===> エクスクラメーションマーク あるいは　びっくりマーク
+ [] ===> 角括弧(かくかっこ) 
