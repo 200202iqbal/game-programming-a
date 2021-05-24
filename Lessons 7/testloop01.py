@@ -28,3 +28,7 @@ for value in raw_data:
     if not isnan(value):
         filtered_data.append(value)
 print(sorted(filtered_data))
+
+ws =["one","two","three"]
+for w in ws:
+    print(w)
