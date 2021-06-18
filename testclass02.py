@@ -12,3 +12,5 @@ while x.counter < 10:
 print(x.counter)
 del x.counter
 print(x.f())
+xf = x.f()
+print(xf)
