@@ -1,0 +1,18 @@
+import tkinter
+root = tkinter.Tk()
+root.minsize(600,400)
+root.title("Test Window")
+can = tkinter.Canvas(bg="black",width=600,height=400)
+square1 = tkinter.Canvas(bg="red",width=100,height=100)
+square2 = tkinter.Canvas(bg="green",width=100,height=100)
+square3 = tkinter.Canvas(bg="yellow",width=100,height=100)
+square4 = tkinter.Canvas(bg="blue",width=100,height=100)
+img1 = tkinter.PhotoImage(file="image/cat.png")
+can.create_image(200,100,image=img1)
+square1.place(x=200,y=100)
+square2.place(x=310,y=100)
+square3.place(x=200,y=210)
+square4.place(x=310,y=210)
+can.place(x=0,y=0)
+
+root.mainloop()
