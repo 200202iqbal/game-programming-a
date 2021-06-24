@@ -20,20 +20,52 @@ can.create_image(450,200, image=gu,tag="you")
 labelYou = tk.Label(text="You",font=("Gil Sans MT",20),bg="yellow")
 labelYou.place(x=430,y=60)
 
-ComOption = r.range(3)
-print(ComOption)
+def hantei(com_te):
+    if(com_te == you_te):
+        result="Draw"
+        labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
+        labelYou.place(x=500,y=500)
+    elif(com_te > you_te):
+        result="Win"
+        labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
+        labelYou.place(x=500,y=500)
+    else:
+        result="Lose"
+        labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
+        labelYou.place(x=500,y=500)
+
+def com_rand():
+    can.delete("com")
+    com_te = r.randint(1,3)
+    print(com_te)
+    if com_te == 1:
+        can.create_image(150,200, image=gu,tag="com")
+    elif com_te == 2:
+       can.create_image(150,200, image=choki,tag="com")  
+    else:
+        can.create_image(150,200, image=pa,tag="com")  
+
+    hantei(com_te)
+
 def gu_te():
+    you_te = 1
     print("GU")
     can.delete("you")
     can.create_image(450,200, image=gu,tag="you")
+    com_rand()
+
 def choki_te():
+    you_te = 2
     print("choki")
     can.delete("you")
     can.create_image(450,200, image=choki,tag="you")
+    com_rand()
 def pa_te():
+    you_te = 3
     print("PA")
     can.delete("you")
     can.create_image(450,200, image=pa,tag="you")
+    com_rand()
 
 #player control : gu
 buttonGu = tk.Button(text="グー")
