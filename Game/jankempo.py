@@ -8,9 +8,11 @@ can = tk.Canvas(root, bg="yellow",width=600,height=400)
 can.place(x=0,y=0)
 tittle = tk.Label(text="JanKemPo Game",bg="yellow",font=("MSゴシック",25))
 tittle.place(x=190,y=20)
-gu = tk.PhotoImage(file="image/gu.png")
-choki = tk.PhotoImage(file="image/choki.png")
-pa = tk.PhotoImage(file="image/pa.png")
+
+gu = tk.PhotoImage(file="Game/image/gu.png")
+choki = tk.PhotoImage(file="Game/image/choki.png")
+pa = tk.PhotoImage(file="Game/image/pa.png")
+
 labelVs = tk.Label(text="VS",font=("Gil Sans MT",50),bg="yellow")
 labelVs.place(x=260,y=170)
 can.create_image(150,200, image=gu,tag="com")
@@ -20,11 +22,12 @@ can.create_image(450,200, image=gu,tag="you")
 labelYou = tk.Label(text="You",font=("Gil Sans MT",20),bg="yellow")
 labelYou.place(x=430,y=60)
 
-def hantei(com_te):
+def hantei():
     if(com_te == you_te):
         result="Draw"
         labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
-        labelYou.place(x=500,y=500)
+        labelResult.place(x=500,y=500)
+
     elif(com_te > you_te):
         result="Win"
         labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
@@ -34,18 +37,21 @@ def hantei(com_te):
         labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
         labelYou.place(x=500,y=500)
 
+
 def com_rand():
     can.delete("com")
     com_te = r.randint(1,3)
+
     print(com_te)
     if com_te == 1:
         can.create_image(150,200, image=gu,tag="com")
     elif com_te == 2:
-       can.create_image(150,200, image=choki,tag="com")  
+       can.create_image(150,200, image=choki,tag="com") 
+       
     else:
         can.create_image(150,200, image=pa,tag="com")  
+        
 
-    hantei(com_te)
 
 def gu_te():
     you_te = 1
@@ -53,6 +59,7 @@ def gu_te():
     can.delete("you")
     can.create_image(450,200, image=gu,tag="you")
     com_rand()
+    
 
 def choki_te():
     you_te = 2
@@ -60,6 +67,8 @@ def choki_te():
     can.delete("you")
     can.create_image(450,200, image=choki,tag="you")
     com_rand()
+    
+
 def pa_te():
     you_te = 3
     print("PA")
