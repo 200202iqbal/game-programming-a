@@ -1,5 +1,6 @@
 import tkinter as tk
 import random as r
+
 root = tk.Tk()
 root.minsize(600,400)
 root.title("JanKemPo")
@@ -20,24 +21,32 @@ can.create_image(450,200, image=gu,tag="you")
 labelYou = tk.Label(text="You",font=("Gil Sans MT",20),bg="yellow")
 labelYou.place(x=430,y=60)
 
-def hantei(com_te):
+labelResult = tk.Label(text="Start",font=("Gil Sans MT",20),bg="yellow")
+labelResult.place(x=250,y=315)
+
+def hantei(com_te,you_te):
+    # print("Computer Option" , com_te)
+    # print("Player Option ", you_te)
     if(com_te == you_te):
         result="Draw"
         labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
-        labelYou.place(x=500,y=500)
+        labelResult.place(x=250,y=315)
+
     elif(com_te > you_te):
-        result="Win"
-        labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
-        labelYou.place(x=500,y=500)
+        result="  Win    "
+        labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")        
+        labelResult.place(x=250,y=315)
     else:
         result="Lose"
         labelResult = tk.Label(text=result,font=("Gil Sans MT",20),bg="yellow")
-        labelYou.place(x=500,y=500)
+        labelResult.place(x=250,y=315)
 
-def com_rand():
+
+def com_rand(you_te):
+    
     can.delete("com")
     com_te = r.randint(1,3)
-    print(com_te)
+    # print(com_te)
     if com_te == 1:
         can.create_image(150,200, image=gu,tag="com")
     elif com_te == 2:
@@ -45,27 +54,27 @@ def com_rand():
     else:
         can.create_image(150,200, image=pa,tag="com")  
 
-    hantei(com_te)
+    hantei(com_te,you_te)
 
 def gu_te():
     you_te = 1
-    print("GU")
+    # print("GU")
     can.delete("you")
     can.create_image(450,200, image=gu,tag="you")
-    com_rand()
+    com_rand(you_te)
 
 def choki_te():
     you_te = 2
-    print("choki")
+    # print("choki")
     can.delete("you")
     can.create_image(450,200, image=choki,tag="you")
-    com_rand()
+    com_rand(you_te)
 def pa_te():
     you_te = 3
-    print("PA")
+    # print("PA")
     can.delete("you")
     can.create_image(450,200, image=pa,tag="you")
-    com_rand()
+    com_rand(you_te)
 
 #player control : gu
 buttonGu = tk.Button(text="グー")
