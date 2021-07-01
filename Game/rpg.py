@@ -42,8 +42,8 @@ def check_move(x, y):
                 return
         elif p == 5:
             fightmanager.fight_start(map_data,x,y,brave)
-        else:
-            return
+        # else:
+        #     return
         brave_x = x
         brave_y = y
         draw_map()
