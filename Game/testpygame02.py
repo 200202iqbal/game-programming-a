@@ -10,10 +10,18 @@ FPSCLOCK = pygame.time.Clock()
 def main():
     while True:
         for event in pygame.event.get():
-            if event == QUIT:
+            if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-        SURFACE.fill(255,255,255)
+        SURFACE.fill((255,255,255))
+
+        pygame.draw.rect(SURFACE,(255,0,0),(10,20,100,50))
+        pygame.draw.rect(SURFACE,(255,0,0),(150,20,100,50),1) #first column for color, #second column for position, #border
+        pygame.draw.rect(SURFACE,(0,255,0),((100,80),(80,50)))
+        rect0 = Rect(200,60,140,80)
+        pygame.draw.rect(SURFACE,(0,0,255),rect0)
+        rect1 = Rect((30,160),(100,50))
+        pygame.draw.rect(SURFACE,(255,255,0),rect1)
 
         pygame.display.update()
         FPSCLOCK.tick(1)
