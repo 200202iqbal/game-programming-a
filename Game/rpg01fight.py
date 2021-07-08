@@ -66,6 +66,55 @@ class FightManager():
         lbltext = lbltext + "\nモンスターの残り体力は " + str(self.monster.hp)
         self.lbl["text"] = lbltext
         self.dialog.update()
+
+        if self.monster.hp < 1 :
+            time.sleep(2)
+            self.fbut["state"] = "normal"
+            self.rbut["state"] = "normal"
+            self.fight_win()
+            return
+        
+        time.sleep(2)
+        brave_dfs = self.brave.get_dfs()
+        if random.random() < 0.2:
+            lbltext = lbltext + "\n\nモンスターは力をためた"
+            self.monster.reserve()
+        else:
+            lbltext = lbltext + "\n\nモンスターの攻撃"
+            self.lbl["text"] = lbltext
+            self.dialog.update()
+            time.sleep(2)
+            monster_atk = self.monster.get_atk()
+            dmg = monster_atk - brave_dfs
+            self.brave.culc_hp(monster_atk,brave_dfs)
+            if dmg <= 0:
+                lbltext = lbltext + "\n防いだ"
+            else:
+                lbltext = lbltext + "\n" + str(dmg) + "のダメージを受けた"
+        self.lbl["text"] = lbltext
+        self.dialog.update()
+        time.sleep(2)
+        lbltext = lbltext + "\n勇者の残り体力は" + str(self.brave.hp)
+        self.lbl["text"] = lbltext
+        self.dialog.update()
+    
+        if self.brave.hp < 1:
+            time.sleep(2)
+            self.fight_lose()
+        else :
+            self.fbut["state"] = "normal"
+            self.rbut["state"] = "normal"
+
+    def fight_win(self):
+        self.map_data[self.brave_y][self.brave_x] = 0
+        self.dialog.place_forget()
+    
+    def fight_lose(self):
+        can = tk.Canvas(self.dialog, width = 820, height = 434)
+        can.place(x=0,y=0)
+        can.create_rectangle(0,0,620,434,fill="red")
+        can.create_text(300,200,fill="white",font=("ＭＳゴシック",15),text="勇者は負けた。最初からやり直し")
+
 class Character:
     def __new__(cls):
         obj = super().__new__(cls)
