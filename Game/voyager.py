@@ -43,6 +43,15 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+        
+        if not game_over:
+            for star in stars:
+                star["pos"][2] -= speed
+                if star["pos"][2] < 64:
+                    if abs(star["pos"][0]-ship[0]) < 50 and abs(star["pos"][1]-ship[1])<50:
+                        game_over = True
+                    star["pos"] = [randint(-1600,1600),randint(-1600,1600),4095]
+
         SURFACE.fill((0,0,0))
         #描面
         stars = sorted(stars,key = lambda x:x["pos"][2],reverse = True)
