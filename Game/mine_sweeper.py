@@ -27,6 +27,43 @@ pygame.init()
 SURFACE = pygame.display.set_mode((WIDTH*SIZE,HEIGHT*SIZE))
 FPSCLOCK = pygame.time.Clock()
 
+def num_of_bomb(field,x_pos,y_pos):
+    #まわりの爆弾の数を返す
+    count = 0
+    for yoffset in range(-1,2):
+        for xoffset in range(-1,2):
+            xpos,ypos = (x_pos + xoffset, y_pos + yoffset)
+            if 0 <= xpos < WIDTH and 0 <= ypos < HEIGHT and field[ypos][xpos]== BOMB:
+                count+=1
+    return count
+
+
+def open_tile(field,x_pos,y_pos):
+    global OPEN_COUNT
+    #チェック済みのタイルなら
+    if CHECKED[y_pos][x_pos]:
+        #何もしない 
+        return
+    #クリックされたタイルをチェック済みにする
+    CHECKED[y_pos][x_pos] =True
+    #周りのマスの爆弾の数を調べる
+    for yoffset in range(-1,2):
+        for xoffset in range(-1,2):
+            #調べるマスの座標を取得
+            xpos,ypos = (x_pos + xoffset, y_pos + yoffset)
+            #調べるマスがフィールド内で何もないなら
+            if 0 <= xpos < WIDTH and 0 <= ypos < HEIGHT and field[ypos][xpos] == EMPTY:
+                #マスを開いた状態にする
+                field[ypos][xpos] = OPENED
+                #開いたマスの数をカウントアップ
+                OPEN_COUNT +=1
+                #爆弾の数を調べる
+                count = num_of_bomb(field,xpos,ypos)
+                #爆弾が0で自分の以外のタイルなら
+                if count == 0 and not (xpos == x_pos and ypos == y_pos):
+                    #open_tileを再帰呼び出し
+                    open_tile(field,xpos,ypos)
+
 def main():
     #フォントの設定
     smallfont = pygame.font.SysFont(None,36)
@@ -56,7 +93,7 @@ def main():
                 pygame.quit()
                 sys.exit()
             #マウスの左ボダンが押されたら
-            if event.type == MOUSEBUTTONDOWN and event.button == 1:
+            if event.type == MOUSEBUTTONDOWN and event.button == 1 and not game_over:
                 #クリックされたタイルんｐ座標を取得
                 xpos = floor(event.pos[0]/SIZE)
                 ypos = floor(event.pos[1]/SIZE)
@@ -65,8 +102,10 @@ def main():
                     #ゲームオーバー
                     game_over = True
                 #爆弾でなければ
-                else:
+                #else:
+                elif field[ypos][xpos] != OPENED:
                     open_tile(field,xpos,ypos)
+
         SURFACE.fill((0,0,0))
         #フィールドの描画
         for ypos in range(HEIGHT):
@@ -77,6 +116,11 @@ def main():
                     pygame.draw.rect(SURFACE,(192,192,192),rect)
                     if game_over and tile == BOMB:
                         pygame.draw.ellipse(SURFACE,(255,255,0),rect)
+                elif tile == OPENED:
+                    count = num_of_bomb(field,xpos,ypos)
+                    if count > 0:
+                        num_image = smallfont.render("{}".format(count),True,(255,255,0))
+                        SURFACE.blit(num_image,(xpos*SIZE + 10,ypos*SIZE+10))
 
         #線の描画
         for index in range(0,WIDTH *SIZE, SIZE):
@@ -85,6 +129,12 @@ def main():
         for index in range(0,HEIGHT*SIZE,SIZE):
             pygame.draw.line(SURFACE,(96,96,96),(0,index),(WIDTH*SIZE,index))
         
+        #メッセージ表示
+        if OPEN_COUNT == WIDTH * HEIGHT - NUM_OF_BOMBS:
+            SURFACE.blit(message_clear,message_rect.topleft)
+        elif game_over:
+            SURFACE.blit(message_over,message_rect.topleft)
+
         pygame.display.update()
         FPSCLOCK.tick(15)
 
