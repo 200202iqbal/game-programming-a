@@ -2,6 +2,7 @@
 import pygame
 import sys
 from random import randint
+from pygame.constants import SCRAP_BMP
 from pygame.locals import QUIT, KEYDOWN, KEYUP,K_LEFT,K_RIGHT,K_UP,K_DOWN
 
 pygame.init()
@@ -43,8 +44,27 @@ def main():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
+            elif event.type == KEYDOWN:
+                if not event.key in keymap:
+                    keymap.append(event.key)
+            elif event.type == KEYUP:
+                keymap.remove(event.key)
         
         if not game_over:
+            score +=1
+            if score % 10 == 0:
+                speed +=1
+            if K_LEFT in keymap:
+                ship[0] -= 30
+            elif K_RIGHT in keymap:
+                ship[0] += 30
+            elif K_UP in keymap:
+                ship[1] -= 30
+            elif K_DOWN in keymap:
+                ship[1] += 30
+            ship[0] = max(-800,min(800,ship[0]))
+            ship[1] = max(-800,min(800,ship[1]))
+
             for star in stars:
                 star["pos"][2] -= speed
                 if star["pos"][2] < 64:
@@ -62,6 +82,14 @@ def main():
             size = (50 << 9)/zpos
             rotated = pygame.transform.rotozoom(rock_image,star["theta"],size/145)
             SURFACE.blit(rotated,(xpos,ypos))
+        SURFACE.blit(scope_image,(0,0))
+
+        if game_over:
+            SURFACE.blit(message_over,message_rect)
+            
+        score_str  = str(score).zfill(6)
+        score_image = scorefont.render(score_str,True,(0,255,0))
+        SURFACE.blit(score_image,(700,50))
 
         pygame.display.update()
         FPSCLOCK.tick(15)
