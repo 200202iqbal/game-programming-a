@@ -144,6 +144,11 @@ def main():
                             score += hit.rect.width * 10
                             shot.count = shot.max_count
                             rocks.remove(hit)
+                            if hit.rect.width > 16:
+                                rocks.append(Rock(hit.rect.center, hit.rect.width/2))
+                                rocks.append(Rock(hit.rect.center,hit.rect.width/2))
+                            if len(rocks) == 0:
+                                game_over = True
         back_x = (back_x + ship.step[0]/2) %1600
         back_y = (back_y + ship.step[1]/2)%1600
         SURFACE.fill((0, 0, 0))
