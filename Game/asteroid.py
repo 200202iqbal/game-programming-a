@@ -1,57 +1,59 @@
-###asteroid.py ###
+### asteroid.py ###
 import pygame
 import sys
-from math import radians,sin,cos
+from math import radians, sin, cos
 from random import randint
-from pygame.locals import QUIT, KEYDOWN, KEYUP, K_LEFT, K_RIGHT,K_UP,K_DOWN,K_SPACE,Rect
+from pygame.locals import QUIT, KEYDOWN, KEYUP, K_LEFT, K_RIGHT, K_UP,\
+                          K_DOWN, K_SPACE, Rect
 
 pygame.init()
-pygame.key.set_repeat(5,5)
-SURFACE = pygame.display.set_mode((800,800))
+pygame.key.set_repeat(5, 5)
+SURFACE = pygame.display.set_mode((800, 800))
 FPSCLOCK = pygame.time.Clock()
 
 class Drawable:
-    def __init__(self,rect):
+    def __init__(self, rect):
         self.rect = rect
-        self.step = [0,0]
+        self.step = [0, 0]
     def move(self):
         rect = self.rect.center
-        xpos = (rect[0]+self.step[0]) %800
-        ypos = (rect[1]+ self.step[1])%800
-        self.rect.center = (xpos,ypos)
+        xpos = (rect[0] + self.step[0]) % 800
+        ypos = (rect[1] + self.step[1]) % 800
+        self.rect.center = (xpos, ypos)
 
 #隕石のクラス
 class Rock(Drawable):
-    def __init__ (self,pos,size):
-        super(Rock,self).__init__(Rect(0,0,size,size))
+    def __init__(self, pos, size):
+        super(Rock, self).__init__(Rect(0, 0, size, size))
         self.rect.center = pos
         self.image = pygame.image.load("image/voyager/rock2.png")
-        self.theta = randint(0,360)
+        self.theta = randint(0, 360)
         self.size = size
-        self.power = 128/size
-        self.step[0] = cos(radians(self.theta))*self.power
-        self.step[1] = sin(radians(self.theta))*self.power
+        self.power = 128 / size
+        self.step[0] = cos(radians(self.theta)) * self.power
+        self.step[1] = sin(radians(self.theta)) * self.power
     def draw(self):
-        rotated = pygame.transform.rotozoom(self.image,self.theta,self.size/64)
+        rotated = pygame.transform.rotozoom(self.image, self.theta,
+                                            self.size / 64)
         rect = rotated.get_rect()
         rect.center = self.rect.center
-        SURFACE.blit(rotated,rect)
+        SURFACE.blit(rotated, rect)
     def tick(self):
-        self.theta +=3
+        self.theta += 3
         self.move()
 
 #弾丸のクラス
 class Shot(Drawable):
     def __init__(self):
-        super(Shot,self).__init__(Rect(0,0,6,6))
+        super(Shot, self).__init__(Rect(0, 0, 6, 6))
         self.count = 40
         self.power = 10
-        self.max_count= 40
+        self.max_count = 40
     def draw(self):
         if self.count < self.max_count:
-            pygame.draw.rect(SURFACE,(255,255,0),self.rect)
+            pygame.draw.rect(SURFACE, (225, 225, 0), self.rect)
     def tick(self):
-        self.count +=1
+        self.count += 1
         self.move()
 
 #自機のクラス
@@ -79,7 +81,7 @@ class Ship(Drawable):
         self.step[1] = sin(radians(self.theta)) * -self.power
         self.move()
 
-def key_event_handler(keymap,ship):
+def key_event_handler(keymap, ship):
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -94,9 +96,9 @@ def key_event_handler(keymap,ship):
     elif K_RIGHT in keymap:
         ship.theta -= 5
     elif K_UP in keymap:
-        ship.accel = min(5,ship.accel + 0.2)
+        ship.accel = min(5, ship.accel + 0.2)
     elif K_DOWN in keymap:
-        ship.accel = max(-5,ship.accel - 0.1)
+        ship.accel = max(-5, ship.accel - 0.1)
 
 def main():
     sysfont = pygame.font.SysFont(None, 72)
@@ -119,17 +121,17 @@ def main():
         shots.append(Shot())
     while len(rocks) < 4:
         pos = randint(0, 800), randint(0, 800)
-        rock = Rock(pos,64)
+        rock = Rock(pos, 64)
         if not rock.rect.colliderect(ship.rect):
             rocks.append(rock)
-
     while True:
-        key_event_handler(keymap,ship)
+        key_event_handler(keymap, ship)
+
         if not game_over:
             ship.tick()
             for rock in rocks:
                 rock.tick()
-                if not rock.rect.colliderect(ship.rect):
+                if rock.rect.colliderect(ship.rect):
                     ship.explode = True
                     game_over = True
             fire = False
@@ -140,30 +142,52 @@ def main():
                     for rock in rocks:
                         if rock.rect.colliderect(shot.rect):
                             hit = rock
-                        if hit != None:
-                            score += hit.rect.width * 10
-                            shot.count = shot.max_count
-                            rocks.remove(hit)
-                            if hit.rect.width > 16:
-                                rocks.append(Rock(hit.rect.center, hit.rect.width/2))
-                                rocks.append(Rock(hit.rect.center,hit.rect.width/2))
-                            if len(rocks) == 0:
-                                game_over = True
-        back_x = (back_x + ship.step[0]/2) %1600
-        back_y = (back_y + ship.step[1]/2)%1600
+                    if hit != None:
+                        score += hit.rect.width * 10
+                        shot.count = shot.max_count
+                        rocks.remove(hit)
+                        if hit.rect.width > 16:
+                            rocks.append(Rock(hit.rect.center,
+                                         hit.rect.width / 2))
+                            rocks.append(Rock(hit.rect.center,
+                                         hit.rect.width / 2))
+                        if len(rocks) == 0:
+                            game_over = True
+                elif not fire and K_SPACE in keymap:
+                    shot.count = 0
+                    shot.rect.center = ship.rect.center
+                    shot_x = shot.power * cos(radians(ship.theta))
+                    shot_y = shot.power * -sin(radians(ship.theta))
+                    shot.step = (shot_x,shot_y)
+                    fire = True
+
+        #背景の描画
+        back_x = (back_x + ship.step[0] / 2) % 1600
+        back_y = (back_y + ship.step[1] / 2) % 1600
         SURFACE.fill((0, 0, 0))
-        SURFACE.blit(back_image,(-back_x,-back_y),(0,0,3200,3200))
-        #自機のクラス
+        SURFACE.blit(back_image, (-back_x, -back_y), (0, 0, 3200, 3200))
+        #自機の描画
         ship.draw()
-        #弾丸
+        #弾丸の描画
         for shot in shots:
             shot.draw()
-        #隕石のクラス
+        #隕石の描画
         for rock in rocks:
             rock.draw()
+        
+        #スコア描画
+        score_str = str(score).zfill(6)
+        score_image = scorefont.render(score_str,True,(0,255,0))
+        SURFACE.blit(score_image,(700,10))
+
+        #メッセージの描画
+        if game_over:
+            if len(rocks) == 0:
+                SURFACE.blit(message_clear,message_rect.topleft)
+            else:
+                SURFACE.blit(message_over,message_rect.topleft)
 
         pygame.display.update()
         FPSCLOCK.tick(20)
-
 if __name__ == "__main__":
     main()
